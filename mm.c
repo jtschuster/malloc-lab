@@ -54,10 +54,37 @@ int mm_init(void)
  * mm_malloc - Allocate a block by incrementing the brk pointer.
  *     Always allocate a block whose size is a multiple of the alignment.
  */
-void *mm_malloc(size_t size)
+//returns the value of the size of the block 
+size_t blockSize(void * headerStart) {
+    return( (*((size_t *)headerStart)) & ~0x7 ); 
+}
+
+//Takes heap ptr and returns true is 'used' but is set
+_Bool used(void * headerStart) { //1 will indicate used
+    if ( (*((size_t* )headerStart)) & 0x1) { // cast as ptr to size_t, dereference, then compare the lsb
+        return 0;
+    }
+    return 1;
+    
+}
+
+void *mm_malloc(size_t size) // implicit list with size_t_size bytes indicating size at start
 {
-    int newsize = ALIGN(size + SIZE_T_SIZE);
+    int newsize = ALIGN(size + SIZE_T_SIZE); // ensures size is big enough for a header of size_t_size + the size of the data
     //find a free block big enough
+    void* check_ptr = mem_heap_lo();
+    void* hi_ptr = mem_heap_hi();
+    int checkedSize;
+    while (check_ptr < hi_ptr) {
+        checkedSize = blockSize(check_ptr);
+        if (!(used(check_ptr))) { // it's free
+            if (newsize < checkedSize) { // its big enough
+                *(size_t *)check_ptr = newsize + 1;
+                return (void *)((char *)check_ptr + SIZE_T_SIZE); 
+            }
+        }
+        check_ptr = (void *)((char *)check_ptr + checkedSize); //increment ptr to go the blocksize ahead and check again
+    }
 
     //if we can't find a freed place:
     void *p = mem_sbrk(newsize);
@@ -65,16 +92,20 @@ void *mm_malloc(size_t size)
         return NULL;
     else
     {
-        *(size_t *)p = size;                      //p holds it's size
-        return (void *)((char *)p + SIZE_T_SIZE); //return a void
+        *(size_t *)p = newsize + 1; // should be a multiple of 8, so adding 1 will set used bit                      
+        return (void *)((char *)p + SIZE_T_SIZE); //return a void type ptr
     }
 }
+
+
+
 
 /*
  * mm_free - Freeing a block does nothing.
  */
 void mm_free(void *ptr)
 {
+    
 }
 
 /*
