@@ -61,11 +61,7 @@ size_t blockSize(void * headerStart) {
 
 //Takes heap ptr and returns true is 'used' but is set
 _Bool used(void * headerStart) { //1 will indicate used
-    if ( (*((size_t* )headerStart)) & 0x1) { // cast as ptr to size_t, dereference, then compare the lsb
-        return 0;
-    }
-    return 1;
-    
+    return ( (*((size_t* )headerStart)) & 0x1);  // cast as ptr to size_t, dereference, then compare the lsb
 }
 
 void *mm_malloc(size_t size) // implicit list with size_t_size bytes indicating size at start
@@ -79,7 +75,7 @@ void *mm_malloc(size_t size) // implicit list with size_t_size bytes indicating 
         checkedSize = blockSize(check_ptr);
         if (!(used(check_ptr))) { // it's free
             if (newsize < checkedSize) { // its big enough
-                *(size_t *)check_ptr = newsize + 1;
+                *((size_t *)check_ptr) = newsize + 1;
                 return (void *)((char *)check_ptr + SIZE_T_SIZE); 
             }
         }
