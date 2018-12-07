@@ -32,15 +32,13 @@ team_t team = {
     /* Second member's full name (leave blank if none) */
     "Jenni Hutson",
     /* Second member's email address (leave blank if none) */
-    "jennihutson@u.northwestern.edu"
-};
+    "jennihutson@u.northwestern.edu"};
 
 /* single word (4) or double word (8) alignment */
 #define ALIGNMENT 8
 
 /* rounds up to the nearest multiple of ALIGNMENT */
-#define ALIGN(size) (((size) + (ALIGNMENT-1)) & ~0x7)
-
+#define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~0x7)
 
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 
@@ -59,12 +57,16 @@ int mm_init(void)
 void *mm_malloc(size_t size)
 {
     int newsize = ALIGN(size + SIZE_T_SIZE);
+    //find a free block big enough
+
+    //if we can't find a freed place:
     void *p = mem_sbrk(newsize);
-    if (p == (void *)-1)
-	return NULL;
-    else {
-        *(size_t *)p = size;
-        return (void *)((char *)p + SIZE_T_SIZE);
+    if (p == (void *)-1) //we've reached the max heap size
+        return NULL;
+    else
+    {
+        *(size_t *)p = size;                      //p holds it's size
+        return (void *)((char *)p + SIZE_T_SIZE); //return a void
     }
 }
 
@@ -86,25 +88,11 @@ void *mm_realloc(void *ptr, size_t size)
 
     newptr = mm_malloc(size);
     if (newptr == NULL)
-      return NULL;
+        return NULL;
     copySize = *(size_t *)((char *)oldptr - SIZE_T_SIZE);
     if (size < copySize)
-      copySize = size;
+        copySize = size;
     memcpy(newptr, oldptr, copySize);
     mm_free(oldptr);
     return newptr;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
