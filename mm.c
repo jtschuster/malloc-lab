@@ -105,7 +105,7 @@ void *mm_malloc(size_t size) // implicit list with size_t_size bytes indicating 
  */
 void mm_free(void *ptr)
 {
-    (*ptr) = (8*ptr) & ~0x7;
+    (*(size_t *)ptr) = (*(size_t *)ptr) & ~0x7;
 }
 
 /*
