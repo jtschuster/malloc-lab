@@ -1,0 +1,95 @@
+[33mcommit 7226fe8981547b190933afd08c48e5323f7cc9a4[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Sat Dec 8 17:06:40 2018 -0600
+
+    working explicit list?
+
+[33mcommit 75350666c5502ffe2d8d71f6b09bbb97915d8d85[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Fri Dec 7 13:58:48 2018 -0600
+
+    working with implicit lists using model in book
+
+[33mcommit 18d335ff2304e5ea80f3a52c299018fcd58121cb[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Fri Dec 7 01:53:25 2018 -0600
+
+    working implicit list with block size and used bit in header
+
+[33mcommit 53d38e503e5da2d16a58a7d3877710a84b560f0a[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:25:08 2018 -0600
+
+    Delete memlib.o
+
+[33mcommit 715af32b60751736448d2ec8f97e7d4463207585[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:25:01 2018 -0600
+
+    Delete mdriver.o
+
+[33mcommit a860eb5ddd38919d7fdabcce213d5bb44edaeb2d[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:51 2018 -0600
+
+    Delete mdriver
+
+[33mcommit d52e726b904f1e74523bcdd30f0e150b056b18ab[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:44 2018 -0600
+
+    Delete ftimer.o
+
+[33mcommit 695fb49577f4348dcceecf2c504cd9bcfcaddb6f[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:36 2018 -0600
+
+    Delete fsecs.o
+
+[33mcommit b5723b883d15ac16db4908c9b15e1e6f6aece80a[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:29 2018 -0600
+
+    Delete fcyc.o
+
+[33mcommit 0ce810c44fa02861487b8907e83e45c4a84979ec[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:21 2018 -0600
+
+    Delete clock.o
+
+[33mcommit b113994969979855b3ef1c4e01eacc9dc9bc7d61[m
+Author: Jackson Schuster <36744439+jtschuster@users.noreply.github.com>
+Date:   Fri Dec 7 01:24:14 2018 -0600
+
+    Delete mm.o
+
+[33mcommit 4e7473528e3ecc74180c44f12912c738f3755177[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Fri Dec 7 01:23:20 2018 -0600
+
+    free sets used bit to 0
+
+[33mcommit fefb70faf13a879e581d5f3a73007d061aaeb135[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Fri Dec 7 01:18:27 2018 -0600
+
+    free sets used bit to 0
+
+[33mcommit db2edb90342974e4829308d0d5fe16ca9b0be209[m
+Author: jtschuster <jacksontschuster@gmail.com>
+Date:   Fri Dec 7 01:16:05 2018 -0600
+
+    malloc scans to find a freed place in memory
+
+[33mcommit 9aef32e5b35c686902ae6dcf0a896dd0edfdf3fd[m
+Author: Jschu345 <jackson.schuster345@gmail.com>
+Date:   Thu Dec 6 22:18:15 2018 -0600
+
+    added comments
+
+[33mcommit a225b738af60fbe980c748bb9c9b2d6dfe099a3c[m
+Author: Jschu345 <jackson.schuster345@gmail.com>
+Date:   Fri Nov 30 20:55:28 2018 -0600
+
+    initial commit
