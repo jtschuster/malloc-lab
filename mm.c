@@ -188,6 +188,8 @@ static void *coalesce(void *bp)
 void insert_sizes(void *ptr, size_t size, int alloc) {
     PUT((void *)HDRP(ptr), PACK(size, alloc));
     PUT((void *)FTRP(ptr), PACK(size, alloc));
+    set_next(ptr, NULL);
+    set_prev(ptr, NULL);
 }
 
 static void *extend_heap(size_t words)
@@ -242,7 +244,7 @@ int mm_init(void)
         return -1;
     }
 
-    //add_free_block_to_list(heap_listp);
+    add_free_block_to_list(heap_listp);
 
     return 0;
 }
