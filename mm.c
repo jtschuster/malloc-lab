@@ -82,19 +82,40 @@ void * heap_listp;
  * mm_init - initialize the malloc package.
  */
 
+void breaker() {
+    printf("hello ther general kenobi");
+}
+
 void set_next(void * blockp, void * nextp) {
+    // PUT(NEXT(blockp), (size_t)nextp);
     NEXT(blockp) = (size_t *)nextp;
 }
 
 void set_prev(void * blockp, void * prevp) {
+    // PUT(PREV(blockp), (size_t)prevp);
     PREV(blockp) = (size_t *)prevp;
 }
 
 void add_to_free_list(void* blockp) {
-    set_next(blockp, NEXT(listroot));
-    set_prev(blockp, listroot);
+    //printf("adding to list");
+    breaker();
+    set_next(blockp, (size_t *)NEXT(listroot)); //block.next = list.next
+    set_prev(blockp, (size_t *)listroot);       //block.prev = listroot
+    set_next(listroot, blockp);                 //listroot.next = block
+    if (NEXT(blockp)) {                         // if block.next != NULL
+        set_prev(NEXT(blockp), blockp); // block.next.prev = block
+    }
+    breaker();
+}
+
+void pluck_from_free_list(void* blockp) {
+    //printf("plucking");
+    breaker();
+    if (PREV(blockp)) {
+        set_next(PREV(blockp), NEXT(blockp));
+    }
     if (NEXT(blockp)) {
-        set_prev(NEXT(blockp), blockp);
+        set_prev(NEXT(blockp), PREV(blockp));
     }
 }
 
@@ -105,32 +126,35 @@ static void *coalesce(void *bp)
     size_t size = GET_SIZE(HDRP(bp));
 
     if (prev_alloc && next_alloc) { /* Case 1 */
-        add_to_free_list(bp);
+        //add_to_free_list(bp);
         return bp;
     }
 
     else if (prev_alloc && !next_alloc) { /* Case 2 */
+        pluck_from_free_list(NEXT_BLKP(bp));
         size += GET_SIZE(HDRP(NEXT_BLKP(bp)));
         PUT(HDRP(bp), PACK(size, 0));
         PUT(FTRP(bp), PACK(size, 0));
-        add_to_free_list(bp);
+        //add_to_free_list(bp);
     }
 
     else if (!prev_alloc && next_alloc) { /* Case 3 */
+        pluck_from_free_list(PREV_BLKP(bp));
         size += GET_SIZE(HDRP(PREV_BLKP(bp)));
         PUT(FTRP(bp), PACK(size, 0));
         PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
         bp = PREV_BLKP(bp);
-        add_to_free_list(bp);
+        //add_to_free_list(bp);
     }
 
     else { /* Case 4 */
-        size += GET_SIZE(HDRP(PREV_BLKP(bp))) +
-        GET_SIZE(FTRP(NEXT_BLKP(bp)));
+        pluck_from_free_list(NEXT_BLKP(bp));
+        pluck_from_free_list(PREV_BLKP(bp));
+        size += GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp)));
         PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
         PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
         bp = PREV_BLKP(bp);
-        add_to_free_list(bp);
+        //add_to_free_list(bp);
     }
     return bp;
 }
@@ -142,20 +166,24 @@ static void *extend_heap(size_t words)
 
     /* Allocate an even number of words to maintain alignment */
     size = (words % 2) ? (words+1) * SIZE_T_SIZE : words * SIZE_T_SIZE;
+    size = size + 2* SIZE_T_SIZE;
     if ((long)(bp = mem_sbrk(size)) == -1){
         return NULL;
     }
     /* Initialize free block header/footer and the epilogue header */
     PUT(HDRP(bp), PACK(size, 0)); /* Free block header */
     PUT(FTRP(bp), PACK(size, 0)); /* Free block footer */
-    PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1)); /* New epilogue header */
-
+    PUT(HDRP(NEXT_BLKP(bp)), PACK(SIZE_T_SIZE, 1)); /* New epilogue header */
+    breaker();
     /* Coalesce if the previous block was free */
     return coalesce(bp);
  }
 
+
+
 int mm_init(void)
 {
+    printf("in init");
     if ((heap_listp = mem_sbrk(4*SIZE_T_SIZE)) == (void *)-1){
         return -1;
     }
@@ -166,6 +194,7 @@ int mm_init(void)
     PUT(heap_listp + (3*SIZE_T_SIZE), PACK(0, 1)); /* Epilogue header */
     heap_listp += (2*SIZE_T_SIZE);
 
+    breaker();
     /* Extend the empty heap with a free block of CHUNKSIZE bytes */
     if (extend_heap(CHUNKSIZE/SIZE_T_SIZE) == NULL){
         return -1;
@@ -190,9 +219,13 @@ _Bool used(void * headerStart) { //1 will indicate used
 static void *find_fit(size_t asize)
 {
     /* First fit search */
-    void *blockp = listroot;
+    size_t *blockp = NEXT(listroot);
+    printf("Finding fit \n");
     while (blockp){
+        printf("%u \n %u \n %u \n",GET_SIZE(HDRP(blockp)), asize, GET_ALLOC(HDRP(blockp)));
+        breaker();
         if (GET_SIZE(HDRP(blockp)) > asize) {
+            printf("found a block to fit it in!");
             return blockp;
         }
         blockp = NEXT(blockp);
@@ -200,21 +233,12 @@ static void *find_fit(size_t asize)
     return NULL; /* No fit */
 }
 
-void pluck_from_free_list(void* blockp) {
-    if (PREV(blockp)) {
-        set_next(PREV(blockp), NEXT(blockp));
-    }
-    if (NEXT(blockp)) {
-        set_prev(NEXT(blockp), PREV(blockp));
-    }
-}
-
 
 static void place(void *bp, size_t asize)
 {
     size_t csize = GET_SIZE(HDRP(bp));
-
-    if ((csize - asize) >= (4*SIZE_T_SIZE)) {
+    breaker();
+    if ((csize - asize) >= 0 /*(4*SIZE_T_SIZE)*/) { //we already set asize to include the header and footer in mm_alloc?
         PUT(HDRP(bp), PACK(asize, 1));
         PUT(FTRP(bp), PACK(asize, 1));
         pluck_from_free_list(bp);
@@ -281,8 +305,7 @@ void mm_free(void *bp)
 
     PUT(HDRP(bp), PACK(size, 0));
     PUT(FTRP(bp), PACK(size, 0));
-    add_to_free_list(bp);
-    coalesce(bp);
+    add_to_free_list( coalesce(bp));
 }
 
 /*
